@@ -9,128 +9,128 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
-// ExperimentConfig holds the configuration for an experiment.
+// ExperimentConfig 保存实验的配置信息。
 type ExperimentConfig struct {
-	// # Host-based configuration values below
+	// # 以下是基于主机的配置值
 
-	// ReplicaHosts is a list of hosts that will run replicas.
+	// ReplicaHosts 是一个主机列表，这些主机将运行副本。
 	ReplicaHosts []string
-	// ClientHosts is a list of hosts that will run clients.
+	// ClientHosts 是一个主机列表，这些主机将运行客户端。
 	ClientHosts []string
-	// Replicas is the total number of replicas.
+	// Replicas 是副本的总数。
 	Replicas int
-	// Clients is the total number of clients.
+	// Clients 是客户端的总数。
 	Clients int
-	// Locations is a list of locations for the replicas (optional, but required if TreePositions is set).
-	// The length of Locations must be equal to the number of replicas, but it may contain duplicates.
-	// The locations are indexed by the replica ID.
-	// Entries in Locations must exist in the latency matrix.
+	// Locations 是一个副本位置列表（可选，但如果设置了 TreePositions 则为必需）。
+	// Locations 的长度必须等于副本的数量，但可以包含重复项。
+	// 位置通过副本 ID 进行索引。
+	// Locations 中的条目必须存在于延迟矩阵中。
 	Locations []string
-	// ByzantineStrategy is a map from each strategy to a list of replica IDs exhibiting that strategy.
+	// ByzantineStrategy 是一个映射，将每个策略映射到表现出该策略的副本 ID 列表。
 	ByzantineStrategy map[string][]uint32
 
-	// # Tree-based configuration values below:
+	// # 以下是基于树的配置值：
 
-	// TreePositions is a list of tree positions for the replicas (optional).
-	// The length of TreePositions must be equal to the number of replicas and the entries must be unique.
-	// The tree positions are indexed by the replica ID.
-	// The 0th entry in TreePositions is the tree's root, the 1st entry is the root's left child,
-	// the 2nd entry is the root's right child, and so on.
+	// TreePositions 是一个副本树位置列表（可选）。
+	// TreePositions 的长度必须等于副本的数量，并且条目不重复。
+	// 树位置通过副本 ID 进行索引。
+	// TreePositions 中的第 0 个条目是树的根，第 1 个条目是根的左子节点，
+	// 第 2 个条目是根的右子节点，依此类推。
 	TreePositions []uint32
-	// BranchFactor is the branch factor for the tree (required if TreePositions is set).
+	// BranchFactor 是树的分支因子（如果设置了 TreePositions 则为必需）。
 	BranchFactor uint32
-	// TreeDelta is the waiting time for intermediate nodes in the tree.
+	// TreeDelta 是树中中间节点的等待时间。
 	TreeDelta time.Duration
-	// Shuffles the tree exisiting positions if true.
+	// 如果为 true，则对现有的树位置进行洗牌。
 	RandomTree bool
 
-	// # Module strings below:
+	// # 以下是模块字符串：
 
-	// Consensus is the name of the consensus implementation to use.
+	// Consensus 是要使用的共识实现的名称。
 	Consensus string
-	// Crypto is the name of the crypto implementation to use.
+	// Crypto 是要使用的加密实现的名称。
 	Crypto string
-	// LeaderRotation is the name of the leader rotation algorithm to use.
+	// LeaderRotation 是要使用的领导者轮换算法的名称。
 	LeaderRotation string
-	// Modules is a list of additional modules to load.
+	// Modules 是要加载的其他模块的列表。
 	Modules []string
-	// Metrics is a list of metrics to log.
+	// Metrics 是要记录的指标列表。
 	Metrics []string
 
-	// # File path strings below:
+	// # 以下是文件路径字符串：
 
-	// Cue is the path to optional .cue config file.
+	// Cue 是可选的 .cue 配置文件的路径。
 	Cue string
-	// Exe is the path to the executable deployed to remote hosts.
+	// Exe 是部署到远程主机的可执行文件的路径。
 	Exe string
-	// Output is the path to the experiment data output directory.
+	// Output 是实验数据输出目录的路径。
 	Output string
-	// SshConfig is the path to the SSH config file.
+	// SshConfig 是 SSH 配置文件的路径。
 	SshConfig string
 
-	// # Profiling flags below:
+	// # 以下是性能分析标志：
 
-	// CpuProfile enables CPU profiling if true.
+	// CpuProfile 如果为 true，则启用 CPU 性能分析。
 	CpuProfile bool
-	// FgProfProfile enables fgprof library if true.
+	// FgProfProfile 如果为 true，则启用 fgprof 库。
 	FgProfProfile bool
-	// MemProfile enables memory profiling if true.
+	// MemProfile 如果为 true，则启用内存性能分析。
 	MemProfile bool
 
-	// DurationSamples is the number of previous views to consider when predicting view duration.
+	// DurationSamples 是预测视图持续时间时要考虑的前几个视图的数量。
 	DurationSamples uint32
 
-	// # Client-based configuration value below:
+	// # 以下是基于客户端的配置值：
 
-	// MaxConcurrent is the maximum number of commands sent concurrently by each client.
+	// MaxConcurrent 是每个客户端并发发送的最大命令数。
 	MaxConcurrent uint32
-	// PayloadSize is the fixed size, in bytes, of each command sent in a batch by the client.
+	// PayloadSize 是客户端在一个批次中发送的每个命令的固定大小（以字节为单位）。
 	PayloadSize uint32
-	// RateLimit is the maximum commands per second a client is allowed to send.
+	// RateLimit 是客户端每秒允许发送的最大命令数。
 	RateLimit float64
-	// RateStep is the number of commands per second that the client can increase to up its rate.
+	// RateStep 是客户端可以提高其速率的每秒命令数。
 	RateStep float64
-	// The number of client commands that should be batched together.
+	// 客户端命令应该批量处理的数量。
 	BatchSize uint32
 
-	// # Other values:
+	// # 其他值：
 
-	// TimeoutMultiplies is the number to multiply the view duration by in case of a timeout.
+	// TimeoutMultiplier 是在发生超时的情况下，将视图持续时间乘以的倍数。
 	TimeoutMultiplier float64
 
-	// Worker spawns a local worker on the controller.
+	// Worker 在控制器上生成一个本地工作进程。
 	Worker bool
 
-	// SharedSeed is the random number generator seed shared across nodes.
+	// SharedSeed 是跨节点共享的随机数生成器种子。
 	SharedSeed int64
-	// Trace enables runtime tracing.
+	// Trace 启用运行时跟踪。
 	Trace bool
-	// LogLevel is the string specifying the log level.
+	// LogLevel 是指定日志级别的字符串。
 	LogLevel string
-	// UseTLS enables TLS.
+	// UseTLS 启用 TLS。
 	UseTLS bool
 
-	// # Duration values are separated here for easily adding compatibility with Cue.
-	// NOTE: Cue does not support time.Duration and must be implemented manually.
+	// # 持续时间值在此处分开，以便于添加对 Cue 的兼容性。
+	// 注意：Cue 不支持 time.Duration，必须手动实现。
 
-	// ClientTimeout specifies the timeout duration of a client.
+	// ClientTimeout 指定客户端的超时持续时间。
 	ClientTimeout time.Duration
-	// ConnectTimeout specifies the duration of the initial connection timeout.
+	// ConnectTimeout 指定初始连接超时的持续时间。
 	ConnectTimeout time.Duration
-	// RateStepInterval is how often the client rate limit should be increased.
+	// RateStepInterval 是客户端速率限制应该增加的频率。
 	RateStepInterval time.Duration
-	// MeasurementInterval is the time interval between measurements
+	// MeasurementInterval 是测量之间的时间间隔。
 	MeasurementInterval time.Duration
 
-	// Duration specifies the entire duration of the experiment.
+	// Duration 指定整个实验的持续时间。
 	Duration time.Duration
-	// ViewTimeout is the duration of the first view.
+	// ViewTimeout 是第一个视图的持续时间。
 	ViewTimeout time.Duration
-	// MaxTimeout is the upper limit on view timeouts.
+	// MaxTimeout 是视图超时的上限。
 	MaxTimeout time.Duration
 }
 
-// TreePosIDs returns a slice of hotstuff.IDs ordered by the tree positions.
+// TreePosIDs 返回一个按树位置排序的 hotstuff.ID 切片。
 func (c *ExperimentConfig) TreePosIDs() []hotstuff.ID {
 	ids := make([]hotstuff.ID, 0, len(c.TreePositions))
 	for i, id := range c.TreePositions {
@@ -139,17 +139,17 @@ func (c *ExperimentConfig) TreePosIDs() []hotstuff.ID {
 	return ids
 }
 
-// ReplicasForHost returns the number of replicas assigned to the host at the given index.
+// ReplicasForHost 返回分配给给定索引处主机的副本数量。
 func (c *ExperimentConfig) ReplicasForHost(hostIndex int) int {
 	return unitsForHost(hostIndex, c.Replicas, len(c.ReplicaHosts))
 }
 
-// ClientsForHost returns the number of clients assigned to the host at the given index.
+// ClientsForHost 返回分配给给定索引处主机的客户端数量。
 func (c *ExperimentConfig) ClientsForHost(hostIndex int) int {
 	return unitsForHost(hostIndex, c.Clients, len(c.ClientHosts))
 }
 
-// unitsForHost returns the number of units to be assigned to the host at hostIndex.
+// unitsForHost 返回要分配给 hostIndex 处主机的单元数量。
 func unitsForHost(hostIndex int, totalUnits int, numHosts int) int {
 	if numHosts == 0 {
 		return 0
@@ -162,14 +162,14 @@ func unitsForHost(hostIndex int, totalUnits int, numHosts int) int {
 	return unitsPerHost
 }
 
-// AssignReplicas assigns replicas to hosts.
+// AssignReplicas 将副本分配给主机。
 func (c *ExperimentConfig) AssignReplicas(srcReplicaOpts *orchestrationpb.ReplicaOpts) ReplicaMap {
 	hostsToReplicas := make(ReplicaMap)
 	nextReplicaID := hotstuff.ID(1)
 
 	for hostIdx, host := range c.ReplicaHosts {
 		numReplicas := c.ReplicasForHost(hostIdx)
-		for range numReplicas {
+		for i := 0; i < numReplicas; i++ {
 			replicaOpts := srcReplicaOpts.New(nextReplicaID, c.Locations)
 			replicaOpts.SetByzantineStrategy(c.lookupByzStrategy(nextReplicaID))
 			hostsToReplicas[host] = append(hostsToReplicas[host], replicaOpts)
@@ -179,9 +179,9 @@ func (c *ExperimentConfig) AssignReplicas(srcReplicaOpts *orchestrationpb.Replic
 	return hostsToReplicas
 }
 
-// lookupByzStrategy returns the Byzantine strategy for the given replica.
-// If the replica is not Byzantine, the function will return an empty string.
-// This assumes the replicaID is valid; this is checked by the cue config parser.
+// lookupByzStrategy 返回给定副本的拜占庭策略。
+// 如果副本不是拜占庭的，该函数将返回一个空字符串。
+// 这假设 replicaID 是有效的；这由 cue 配置解析器检查。
 func (c *ExperimentConfig) lookupByzStrategy(replicaID hotstuff.ID) string {
 	for strategy, ids := range c.ByzantineStrategy {
 		if slices.Contains(ids, uint32(replicaID)) {
@@ -191,14 +191,14 @@ func (c *ExperimentConfig) lookupByzStrategy(replicaID hotstuff.ID) string {
 	return ""
 }
 
-// AssignClients assigns clients to hosts.
+// AssignClients 将客户端分配给主机。
 func (c *ExperimentConfig) AssignClients() ClientMap {
 	hostsToClients := make(ClientMap)
 	nextClientID := hotstuff.ID(1)
 
 	for hostIdx, host := range c.ClientHosts {
 		numClients := c.ClientsForHost(hostIdx)
-		for range numClients {
+		for i := 0; i < numClients; i++ {
 			hostsToClients[host] = append(hostsToClients[host], nextClientID)
 			nextClientID++
 		}
@@ -206,19 +206,17 @@ func (c *ExperimentConfig) AssignClients() ClientMap {
 	return hostsToClients
 }
 
-// IsLocal returns true if both the replica and client hosts slices
-// contain one instance of "localhost". See NewLocal.
+// IsLocal 如果副本和客户端主机切片都只包含一个 "localhost" 实例，则返回 true。请参阅 NewLocal。
 func (c *ExperimentConfig) IsLocal() bool {
 	if len(c.ClientHosts) > 1 || len(c.ReplicaHosts) > 1 {
 		return false
 	}
-	return c.ReplicaHosts[0] == "localhost" && c.ClientHosts[0] == "localhost" ||
-		c.ReplicaHosts[0] == "127.0.0.1" && c.ClientHosts[0] == "127.0.0.1"
+	return (c.ReplicaHosts[0] == "localhost" && c.ClientHosts[0] == "localhost") ||
+		(c.ReplicaHosts[0] == "127.0.0.1" && c.ClientHosts[0] == "127.0.0.1")
 }
 
-// AllHosts returns the list of all hostnames, including replicas and clients.
-// If the configuration is set to run locally, the function returns a list with
-// one entry called "localhost".
+// AllHosts 返回所有主机名的列表，包括副本和客户端。
+// 如果配置设置为本地运行，该函数将返回一个包含一个名为 "localhost" 的条目的列表。
 func (c *ExperimentConfig) AllHosts() []string {
 	if c.IsLocal() {
 		return []string{"localhost"}
@@ -226,7 +224,7 @@ func (c *ExperimentConfig) AllHosts() []string {
 	return append(c.ReplicaHosts, c.ClientHosts...)
 }
 
-// CreateReplicaOpts creates a new ReplicaOpts based on the experiment configuration.
+// CreateReplicaOpts 根据实验配置创建一个新的 ReplicaOpts。
 func (c *ExperimentConfig) CreateReplicaOpts() *orchestrationpb.ReplicaOpts {
 	return &orchestrationpb.ReplicaOpts{
 		UseTLS:            c.UseTLS,
@@ -247,7 +245,7 @@ func (c *ExperimentConfig) CreateReplicaOpts() *orchestrationpb.ReplicaOpts {
 	}
 }
 
-// CreateClientOpts creates a new ClientOpts based on the experiment configuration.
+// CreateClientOpts 根据实验配置创建一个新的 ClientOpts。
 func (c *ExperimentConfig) CreateClientOpts() *orchestrationpb.ClientOpts {
 	return &orchestrationpb.ClientOpts{
 		UseTLS:           c.UseTLS,
@@ -261,10 +259,10 @@ func (c *ExperimentConfig) CreateClientOpts() *orchestrationpb.ClientOpts {
 	}
 }
 
-// ReplicaMap maps from a host to a slice of replica options.
+// ReplicaMap 将主机映射到副本选项切片。
 type ReplicaMap map[string][]*orchestrationpb.ReplicaOpts
 
-// ReplicaIDs returns the IDs of the replicas running on the given host.
+// ReplicaIDs 返回在给定主机上运行的副本的 ID。
 func (r ReplicaMap) ReplicaIDs(host string) []uint32 {
 	ids := make([]uint32, 0, len(r[host]))
 	for _, opts := range r[host] {
@@ -273,10 +271,10 @@ func (r ReplicaMap) ReplicaIDs(host string) []uint32 {
 	return ids
 }
 
-// ClientMap maps from a host to a slice of client IDs.
+// ClientMap 将主机映射到客户端 ID 切片。
 type ClientMap map[string][]hotstuff.ID
 
-// ClientIDs returns the IDs of the clients running on the given host.
+// ClientIDs 返回在给定主机上运行的客户端的 ID。
 func (c ClientMap) ClientIDs(host string) []uint32 {
 	ids := make([]uint32, 0, len(c[host]))
 	for _, id := range c[host] {
